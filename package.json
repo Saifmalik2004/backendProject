@@ -1,0 +1,16 @@
+{
+  "name": "backendproject",
+  "version": "1.0.0",
+  "description": "learn backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "author": "saif malik",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3"
+  }
+}
