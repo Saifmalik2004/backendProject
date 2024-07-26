@@ -1,17 +1,17 @@
 import mongoose,{Schema} from "mongoose";
-import { User } from "./userModel";
+import { User } from "./userModel.js";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const videoSchema = new Schema(
     {
 video:{
     type:String,
-    require:true,
+    required:true,
 
 },
 thumbnail:{
     type:String,
-    require:true,
+    required:true,
     
 },
 title:{
@@ -21,12 +21,12 @@ title:{
 },
 description:{
     type:String,
-    require:true,
+    required:true,
 
 },
 duration:{
     type:String,
-    require:true,
+    required:true,
 
 },
 views:{
@@ -39,7 +39,7 @@ isPublished:{
 },
 owner:{
     type:Schema.Types.ObjectId,
-    ref:User
+    ref:"User"
 }
     },
     {timestamps:true}
