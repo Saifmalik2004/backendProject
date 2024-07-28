@@ -3,7 +3,7 @@ import { User } from "../models/userModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
-
+import jwt from "jsonwebtoken"
 const generateAccessAndRefereshTokens = async(userId) =>{
   try {
       const user = await User.findById(userId)
