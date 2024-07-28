@@ -15,8 +15,9 @@ cloudinary.config({
             resource_type: "auto"
         })
         // file has been uploaded successfull
-        //console.log("file is uploaded on cloudinary ", response.url);
+        console.log("file is uploaded on cloudinary ", response.url);
         fs.unlinkSync(localFilePath)
+        
         return response;
 
     } catch (error) {
@@ -26,5 +27,35 @@ cloudinary.config({
   }
 
 
+  const extractPublicIdFromUrl = (url) => {
+    // Example URL: https://res.cloudinary.com/demo/image/upload/v1617622640/sample.jpg
+    // Extracts "v1617622640/sample" from the URL
+    const urlParts = url.split('/');
+    const publicIdWithExtension = urlParts[urlParts.length - 1]; // Get the last part of the URL
+    const publicId = publicIdWithExtension.split('.')[0]; // Remove the file extension
+    return publicId;
+  };
 
-export {uploadOnCloudinary}
+
+  // Function to delete a file from Cloudinary using its public ID
+ const deleteFromCloudinary = async (publicId) => {
+  try {
+      // Ensure the public ID is valid
+      if (!publicId) {
+          console.error("Invalid public ID provided for Cloudinary deletion");
+          return false;
+      }
+
+      // Delete the file from Cloudinary
+      await cloudinary.uploader.destroy(publicId);
+      console.log("File deleted from Cloudinary successfully");
+      return true;
+  } catch (error) {
+      console.error("Error deleting file from Cloudinary:", error);
+      return false;
+  }
+};
+
+
+
+export {uploadOnCloudinary,extractPublicIdFromUrl,deleteFromCloudinary}
