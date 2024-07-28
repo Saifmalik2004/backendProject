@@ -34,8 +34,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
     }
 
     // Upload video and thumbnail to Cloudinary
-    const uploadedVideo = await uploadOnCloudinary(videoFile.path);
-    const uploadedThumbnail = await uploadOnCloudinary(thumbnailFile.path);
+    const uploadedVideo = await uploadOnCloudinary(videoFile.path,"backend/vedio");
+    const uploadedThumbnail = await uploadOnCloudinary(thumbnailFile.path,"backend/thumbnail");
 
     // Check if uploads were successful
     if (!uploadedVideo || !uploadedThumbnail) {
@@ -175,7 +175,7 @@ const updateVideo = asyncHandler(async (req, res) => {
       }
 
       // Upload the new thumbnail to Cloudinary
-      const uploadResponse = await uploadOnCloudinary(newThumbnailFile);
+      const uploadResponse = await uploadOnCloudinary(newThumbnailFile,"backend/thumbnail");
       if (!uploadResponse) {
         throw new ApiError(500, "Failed to upload new thumbnail");
       }

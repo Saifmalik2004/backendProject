@@ -47,8 +47,8 @@ if(req.files && Array.isArray(req.files.coverImage)&& req.files.coverImage.lengt
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required")
 }
-const avatar=await uploadOnCloudinary(avatarLocalPath)
-const coverImage=await uploadOnCloudinary(coverImageLocalPath)
+const avatar=await uploadOnCloudinary(avatarLocalPath,"backend/avatar")
+const coverImage=await uploadOnCloudinary(coverImageLocalPath,'backend/coverImage')
 
 if (!avatar) {
   throw new ApiError(400, "Avatar file is required")
@@ -275,7 +275,7 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
   }
 
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
+    const avatar = await uploadOnCloudinary(avatarLocalPath,'backend/avatar')
 
     if (!avatar.url) {
         throw new ApiError(400, "Error while uploading on avatar")
@@ -324,7 +324,7 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
   }
 
 
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath,"backend/coverImage")
 
     if (!coverImage.url) {
         throw new ApiError(400, "Error while uploading on avatar")
