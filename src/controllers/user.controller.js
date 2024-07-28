@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/userModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 const generateAccessAndRefereshTokens = async(userId) =>{
   try {
@@ -61,13 +61,13 @@ const user = await User.create({
   password,
   username: username.toLowerCase()
 })
- const createduser = await User.findById(user._id).select("-password -refreshToken ")
- if(!createduser){
+ const createdUser = await User.findById(user._id).select("-password -refreshToken ")
+ if(!createdUser){
   throw new ApiError(500,"something went wrong while register user")
  }
-console.log("createduser",createduser)
+console.log("createduser",createdUser)
  return res.status(201).json(
-  new ApiResponse(200,createduser,"user Register Successfully")
+  new ApiResponse(200,createdUser,"user Register Successfully")
  )
   });
 
