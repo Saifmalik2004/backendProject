@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/userModel.js";
 import { ApiError } from "../utils/ApiError.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary ,extractPublicIdFromUrl,deleteFromCloudinary} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 const generateAccessAndRefereshTokens = async(userId) =>{
@@ -264,10 +264,10 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
   if (currentUser.avatar) {
     try {
       // Extract the public ID from the URL
-      const publicId = currentUser.avatar.split('/').pop().split('.')[0];
+      const publicId = extractPublicIdFromUrl(currentUser.avatar)
 
       // Delete the old avatar from Cloudinary
-      await cloudinary.uploader.destroy(publicId);
+      await deleteFromCloudinary(publicId,"image")
       console.log("old Avatar deleted successfully")
     } catch (error) {
       console.error("Error deleting old avatar:", error);
@@ -313,10 +313,9 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
   if (currentUser.coverImage) {
     try {
       // Extract the public ID from the URL
-      const publicId = currentUser.coverImage.split('/').pop().split('.')[0];
-
+      const publicId = extractPublicIdFromUrl(currentUser.coverImage)
       // Delete the old cover image from Cloudinary
-      await cloudinary.uploader.destroy(publicId);
+      await deleteFromCloudinary(publicId,"image")
       console.log("coverImage deleted successfully")
     } catch (error) {
       console.error("Error deleting old cover image:", error);

@@ -30,33 +30,51 @@ cloudinary.config({
 
 
   const extractPublicIdFromUrl = (url) => {
-    // Example URL: https://res.cloudinary.com/demo/image/upload/v1617622640/sample.jpg
-    // Extracts "v1617622640/sample" from the URL
-    const urlParts = url.split('/');
-    const publicIdWithExtension = urlParts[urlParts.length - 1]; // Get the last part of the URL
-    const publicId = publicIdWithExtension.split('.')[0]; // Remove the file extension
-    return publicId;
+     // Split the URL by '/'
+  const urlParts = url.split('/');
+
+  // Find the index of 'upload' which is right before the version number
+  const uploadIndex = urlParts.indexOf('upload');
+
+  // Extract everything after 'upload/' till the end and join it back
+  const publicIdWithExtension = urlParts.slice(uploadIndex + 2).join('/');
+
+  // Remove the file extension
+  const publicId = publicIdWithExtension.replace(/\.[^/.]+$/, ""); // This regex removes the extension
+
+  return publicId;
   };
+  
+  
 
 
   // Function to delete a file from Cloudinary using its public ID
- const deleteFromCloudinary = async (publicId) => {
-  try {
-      // Ensure the public ID is valid
-      if (!publicId) {
-          console.error("Invalid public ID provided for Cloudinary deletion");
+  const deleteFromCloudinary = async (publicId,type) => {
+    try {
+        if (!publicId) {
+            console.error("Invalid public ID provided for Cloudinary deletion");
+            return false;
+        }
+  
+        console.log(`Attempting to delete file with public ID: ${publicId}`);
+  
+        // Delete the file from Cloudinary
+        const result = await cloudinary.uploader.destroy(publicId,{resource_type: type});
+        console.log("Cloudinary delete response:", result);
+  
+        if (result.result === "ok") {
+          console.log("File deleted from Cloudinary successfully");
+          return true;
+        } else {
+          console.error("Failed to delete file from Cloudinary");
           return false;
-      }
-
-      // Delete the file from Cloudinary
-      await cloudinary.uploader.destroy(publicId);
-      console.log("File deleted from Cloudinary successfully");
-      return true;
-  } catch (error) {
-      console.error("Error deleting file from Cloudinary:", error);
-      return false;
-  }
-};
+        }
+    } catch (error) {
+        console.error("Error deleting file from Cloudinary:", error);
+        return false;
+    }
+  };
+  
 
 
 
