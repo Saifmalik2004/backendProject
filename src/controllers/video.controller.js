@@ -9,9 +9,50 @@ import { v2 as cloudinary } from "cloudinary";
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
-    //TODO: get all videos based on query, sort, pagination
-})
+  const { page = 1, limit = 10, query, sortBy = 'createdAt', sortType = 'desc', isPublished } = req.query;
+
+  // Build search query
+  let searchQuery = {};
+  if (query) {
+      searchQuery = {
+          $or: [
+              { title: { $regex: query, $options: 'i' } }, // Case-insensitive search
+              { description: { $regex: query, $options: 'i' } }
+          ]
+      };
+  }
+  if (isPublished !== undefined) {
+      searchQuery.isPublished = isPublished === 'true'; // Convert to boolean
+  }
+
+  // Calculate skip value
+  const skip = (page - 1) * limit;
+
+  // Determine sort order
+  const sortOrder = sortType === 'desc' ? -1 : 1;
+
+  try {
+      // Fetch videos
+      const videos = await Video.find(searchQuery)
+          .sort({ [sortBy]: sortOrder })
+          .skip(skip)
+          .limit(Number(limit));
+
+      // Count total videos
+      const totalVideos = await Video.countDocuments(searchQuery);
+
+      // Response
+      res.status(200).json({
+          totalVideos,
+          currentPage: Number(page),
+          totalPages: Math.ceil(totalVideos / limit),
+          videos
+      });
+  } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body;
