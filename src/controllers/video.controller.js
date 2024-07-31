@@ -169,10 +169,24 @@ const getVideoById = asyncHandler(async (req, res) => {
     if (!videoDetails || videoDetails.length === 0) {
         throw new ApiError(404, "Video not found");
     }
+    const video = videoDetails[0];
 
+    // Add video to the user's watch history
+    const userId = req.user._id; // Assuming the user is authenticated and req.user contains the user's data
+
+    // Check if the video is already in the watch history
+    const user = await User.findById(userId);
+
+    if (!user.watchHistory.includes(video._id)) {
+        await User.findByIdAndUpdate(
+            userId,
+            { $addToSet: { watchHistory: video._id } }, // Use $addToSet to prevent duplicates
+            { new: true } // Return the updated user document
+        );
+    }
     // Respond with the video details
     return res.status(200).json(
-        new ApiResponse(200, videoDetails[0], "Video fetched successfully")
+        new ApiResponse(200, video, "Video fetched successfully")
     );
 });
 
